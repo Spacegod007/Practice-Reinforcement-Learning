@@ -14,14 +14,15 @@ def main(envName):
 
     learning_rate = 0.1
     discount = 0.95
-    episodes = 2000
+    episodes = 25_000
 
     show_every = 500
+    plot_every = 100
 
-    discrete_os_size = [20] * len(env.observation_space.high)
+    discrete_os_size = [30] * len(env.observation_space.high)
     discrete_os_win_size = (env.observation_space.high - env.observation_space.low) / discrete_os_size
 
-    epsilon = 0.5
+    epsilon = 0.25
     start_epsilon_decaying = 1
     end_epsilon_decaying = episodes // 2
 
@@ -36,8 +37,7 @@ def main(envName):
 
         episode_reward = 0
 
-        if (not episode % show_every != 0):
-            print(episode)
+        if (not episode % show_every):
             render = True
         else:
             render = False
@@ -66,7 +66,6 @@ def main(envName):
                 new_q = (1 - learning_rate) * current_q + learning_rate * (reward + discount * max_future_q)
                 q_table[discrete_state + (action, )] = new_q
             elif observation[0] >= env.goal_position:
-                print(f"Completed on episode {episode}")
                 q_table[discrete_state + (action, )] = 0
 
             discrete_state = new_discrete_state
@@ -76,17 +75,18 @@ def main(envName):
 
         ep_rewards.append(episode_reward)
 
-        if not episode % show_every:
-            average_reward = sum(ep_rewards[-show_every:]) / len(ep_rewards[-show_every:])
+        if not episode % plot_every:
+            average_reward = sum(ep_rewards[-plot_every:]) / len(ep_rewards[-plot_every:])
             aggr_ep_rewards['ep'].append(episode)
             aggr_ep_rewards['avg'].append(average_reward)
-            aggr_ep_rewards['min'].append(min(ep_rewards[-show_every:]))
-            aggr_ep_rewards['max'].append(max(ep_rewards[-show_every:]))
+            aggr_ep_rewards['min'].append(min(ep_rewards[-plot_every:]))
+            aggr_ep_rewards['max'].append(max(ep_rewards[-plot_every:]))
 
-            print(f"Episode: {episode}, average: {average_reward}, min: {min(ep_rewards[-show_every:])}, max: {max(ep_rewards[-show_every:])}")
+            print(f"Episode: {episode}, average: {average_reward}, min: {min(ep_rewards[-plot_every:])}, max: {max(ep_rewards[-plot_every:])}")
     env.close()
     plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['avg'], label="avg")
     plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['min'], label="min")
     plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['max'], label="max")
     plt.legend(loc=4)
+    plt.grid()
     plt.show()
