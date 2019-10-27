@@ -1,3 +1,4 @@
-from canvas_tutorial.canvasTutorial import main
+# from canvas_tutorial.canvasTutorial import main
+from youtube_tutorial.youtubeTutorial import main
 
-main('MountainCar-v0', 1000, 500)
+main('MountainCar-v0')

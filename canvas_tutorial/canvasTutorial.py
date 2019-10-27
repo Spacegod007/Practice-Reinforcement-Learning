@@ -3,7 +3,9 @@ import gym
 from canvas_tutorial.DQN import DQN
 
 
-def main(envName, trails, trail_len):
+def main(envName):
+    trails = 1000
+    trail_len = 500
     env = gym.make(envName)
     agent = DQN(env=env)
 
